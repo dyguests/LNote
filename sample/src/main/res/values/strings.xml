@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Sample</string>
+    <string name="demo">演示</string>
+    <string name="text_view">TextView</string>
+</resources>
