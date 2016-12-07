@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
         actions = new ArrayList<>();
         actions.add(new Action());
         actions.add(new Action());
+        actions.add(new Action());
+        actions.add(new Action());
+        actions.add(new Action());
+        actions.add(new Action());
+        actions.add(new Action());
 
         adapter.replaceItems(actions);
     }
