@@ -1,3 +1,3 @@
 #LNote
 
-LNote,柠檬笔记.
+LNote,柠檬记事.
