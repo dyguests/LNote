@@ -54,6 +54,7 @@ public class ScheduleView extends ViewGroup {
         } else {
             mClipToPadding = true;
         }
+        setScrollContainer(true);
     }
 
     @Override
