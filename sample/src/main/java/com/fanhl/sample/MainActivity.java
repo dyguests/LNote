@@ -13,7 +13,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.scheduleView) TimelineView timelineView;
+    @BindView(R.id.timelineView) TimelineView timelineView;
 
     private ScheduleAdapter adapter;
     private List<Action> actions;

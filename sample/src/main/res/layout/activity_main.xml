@@ -20,7 +20,7 @@
         android:text="@string/demo"/>
 
     <com.fanhl.scheduleview.TimelineView
-        android:id="@+id/scheduleView"
+        android:id="@+id/timelineView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>
