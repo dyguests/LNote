@@ -7,6 +7,7 @@ import android.support.v4.os.TraceCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
 /**
@@ -37,6 +38,17 @@ public class ScheduleView extends ViewGroup {
     Adapter mAdapter;
     @VisibleForTesting boolean mFirstLayoutComplete;
 
+    ItemAnimator mItemAnimator = new DefaultItemAnimator();
+
+    // Touch/scrolling handling
+
+    private int mTouchSlop;
+    private final int mMinFlingVelocity;
+    private final int mMaxFlingVelocity;
+
+    private ItemAnimator.ItemAnimatorListener mItemAnimatorListener =
+            new ItemAnimatorRestoreListener();
+
     public ScheduleView(Context context) {
         this(context, null);
     }
@@ -55,6 +67,16 @@ public class ScheduleView extends ViewGroup {
             mClipToPadding = true;
         }
         setScrollContainer(true);
+        setFocusableInTouchMode(true);
+
+        final ViewConfiguration vc = ViewConfiguration.get(context);
+        //getScaledTouchSlop是一个距离，表示滑动的时候，手的移动要大于这个距离才开始移动控件。如果小于这个距离就不触发移动控件，如viewpager就是用这个距离来判断用户是否翻页
+        mTouchSlop = vc.getScaledTouchSlop();
+        mMinFlingVelocity = vc.getScaledMinimumFlingVelocity();
+        mMaxFlingVelocity = vc.getScaledMaximumFlingVelocity();
+        setWillNotDraw(getOverScrollMode() == View.OVER_SCROLL_NEVER);
+
+        mItemAnimator.setListener(mItemAnimatorListener);
     }
 
     @Override
@@ -138,5 +160,82 @@ public class ScheduleView extends ViewGroup {
      */
     public static abstract class ViewHolder {
         // FIXME: 2016/12/7 ViewHolder
+    }
+
+    /**
+     * Internal listener that manages items after animations finish. This is how items are
+     * retained (not recycled) during animations, but allowed to be recycled afterwards.
+     * It depends on the contract with the ItemAnimator to call the appropriate dispatch*Finished()
+     * method on the animator's listener when it is done animating any item.
+     */
+    private class ItemAnimatorRestoreListener implements ItemAnimator.ItemAnimatorListener {
+
+        ItemAnimatorRestoreListener() {
+        }
+
+        @Override
+        public void onAnimationFinished(ViewHolder item) {
+            // FIXME: 2016/12/8 之后写
+
+//            item.setIsRecyclable(true);
+//            if (item.mShadowedHolder != null && item.mShadowingHolder == null) { // old vh
+//                item.mShadowedHolder = null;
+//            }
+//            // always null this because an OldViewHolder can never become NewViewHolder w/o being
+//            // recycled.
+//            item.mShadowingHolder = null;
+//            if (!item.shouldBeKeptAsChild()) {
+//                if (!removeAnimatingView(item.itemView) && item.isTmpDetached()) {
+//                    removeDetachedView(item.itemView, false);
+//                }
+//            }
+        }
+    }
+
+    /**
+     * This class defines the animations that take place on items as changes are made
+     * to the adapter.
+     * <p>
+     * Subclasses of ItemAnimator can be used to implement custom animations for actions on
+     * ViewHolder items. The RecyclerView will manage retaining these items while they
+     * are being animated, but implementors must call {@link #dispatchAnimationFinished(ViewHolder)}
+     * when a ViewHolder's animation is finished. In other words, there must be a matching
+     * {@link #dispatchAnimationFinished(ViewHolder)} call for each
+     * {@link #animateAppearance(ViewHolder, ItemHolderInfo, ItemHolderInfo) animateAppearance()},
+     * {@link #animateChange(ViewHolder, ViewHolder, ItemHolderInfo, ItemHolderInfo)
+     * animateChange()}
+     * {@link #animatePersistence(ViewHolder, ItemHolderInfo, ItemHolderInfo) animatePersistence()},
+     * and
+     * {@link #animateDisappearance(ViewHolder, ItemHolderInfo, ItemHolderInfo)
+     * animateDisappearance()} call.
+     * <p>
+     * <p>By default, RecyclerView uses {@link DefaultItemAnimator}.</p>
+     *
+     * @see #setItemAnimator(ItemAnimator)
+     */
+    @SuppressWarnings("UnusedParameters")
+    public static abstract class ItemAnimator {
+        private ItemAnimatorListener mListener = null;
+
+        /**
+         * Internal only:
+         * Sets the listener that must be called when the animator is finished
+         * animating the item (or immediately if no animation happens). This is set
+         * internally and is not intended to be set by external code.
+         *
+         * @param listener The listener that must be called.
+         */
+        void setListener(ItemAnimatorListener listener) {
+            mListener = listener;
+        }
+
+        /**
+         * The interface to be implemented by listeners to animation events from this
+         * ItemAnimator. This is used internally and is not intended for developers to
+         * create directly.
+         */
+        interface ItemAnimatorListener {
+            void onAnimationFinished(ViewHolder item);
+        }
     }
 }
