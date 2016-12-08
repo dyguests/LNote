@@ -22,6 +22,5 @@
     <com.fanhl.scheduleview.ScheduleView
         android:id="@+id/scheduleView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/item_action"/>
+        android:layout_height="match_parent"/>
 </LinearLayout>

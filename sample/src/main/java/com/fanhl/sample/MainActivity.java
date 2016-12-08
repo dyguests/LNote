@@ -2,7 +2,6 @@ package com.fanhl.sample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 
 import com.fanhl.sample.model.Action;
 import com.fanhl.scheduleview.ScheduleView;
@@ -32,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void assignView() {
-        scheduleView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ScheduleAdapter(this);
-        scheduleView.setAdapter(adapter);
+//        scheduleView.setLayoutManager(new LinearLayoutManager(this));
+//        adapter = new ScheduleAdapter(this);
+//        scheduleView.setAdapter(adapter);
     }
 
     private void initData() {
