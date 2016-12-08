@@ -1,6 +1,7 @@
 package com.fanhl.scheduleview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.os.TraceCompat;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,9 @@ import android.view.ViewGroup;
  */
 
 public class ScheduleView extends ViewGroup {
+    static final String TAG = ScheduleView.class.getSimpleName();
+
+    private static final int[] CLIP_TO_PADDING_ATTR = {android.R.attr.clipToPadding};
 
     /**
      * OnLayout has been called by the View system.
@@ -24,19 +28,32 @@ public class ScheduleView extends ViewGroup {
      */
     private static final String TRACE_ON_LAYOUT_TAG = "RV OnLayout";
 
+    /**
+     * Prior to L, there is no way to query this variable which is why we override the setter and
+     * track it here.
+     */
+    boolean mClipToPadding;
+
     Adapter mAdapter;
     @VisibleForTesting boolean mFirstLayoutComplete;
 
     public ScheduleView(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public ScheduleView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
     }
 
-    public ScheduleView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+    public ScheduleView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        if (attrs != null) {
+            TypedArray a = context.obtainStyledAttributes(attrs, CLIP_TO_PADDING_ATTR, defStyle, 0);
+            mClipToPadding = a.getBoolean(0, true);
+            a.recycle();
+        } else {
+            mClipToPadding = true;
+        }
     }
 
     @Override
@@ -100,7 +117,6 @@ public class ScheduleView extends ViewGroup {
      * be then obtained from {@link #getProperties(Context, AttributeSet, int, int)}. In case
      * a LayoutManager specifies both constructors, the non-default constructor will take
      * precedence.
-     *
      */
     public static abstract class LayoutManager {
 

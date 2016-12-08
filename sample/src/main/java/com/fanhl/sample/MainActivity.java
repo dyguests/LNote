@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.fanhl.sample.model.Action;
 import com.fanhl.scheduleview.ScheduleView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,15 +40,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshData() {
-        actions = new ArrayList<>();
-        actions.add(new Action());
-        actions.add(new Action());
-        actions.add(new Action());
-        actions.add(new Action());
-        actions.add(new Action());
-        actions.add(new Action());
-        actions.add(new Action());
-
-        adapter.replaceItems(actions);
+//        actions = new ArrayList<>();
+//        actions.add(new Action());
+//        actions.add(new Action());
+//        actions.add(new Action());
+//        actions.add(new Action());
+//        actions.add(new Action());
+//        actions.add(new Action());
+//        actions.add(new Action());
+//
+//        adapter.replaceItems(actions);
     }
 }
