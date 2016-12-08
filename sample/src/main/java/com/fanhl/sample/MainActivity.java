@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.fanhl.sample.model.Action;
-import com.fanhl.scheduleview.ScheduleView;
+import com.fanhl.scheduleview.TimelineView;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.scheduleView) ScheduleView scheduleView;
+    @BindView(R.id.scheduleView) TimelineView timelineView;
 
     private ScheduleAdapter adapter;
     private List<Action> actions;

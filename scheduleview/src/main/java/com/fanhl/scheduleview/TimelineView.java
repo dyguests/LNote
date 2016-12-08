@@ -4,20 +4,22 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.os.TraceCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.accessibility.AccessibilityManager;
 
 /**
- * 日程视图
+ * 时间线视图(可能这是一个 左边+Section头，右边显示item的双层视图）
  * <p>
  * Created by fanhl on 2016/12/7.
  */
 
-public class ScheduleView extends ViewGroup {
-    static final String TAG = ScheduleView.class.getSimpleName();
+public class TimelineView extends ViewGroup {
+    static final String TAG = TimelineView.class.getSimpleName();
 
     private static final int[] CLIP_TO_PADDING_ATTR = {android.R.attr.clipToPadding};
 
@@ -38,6 +40,8 @@ public class ScheduleView extends ViewGroup {
     Adapter mAdapter;
     @VisibleForTesting boolean mFirstLayoutComplete;
 
+    private final AccessibilityManager mAccessibilityManager;
+
     ItemAnimator mItemAnimator = new DefaultItemAnimator();
 
     // Touch/scrolling handling
@@ -46,18 +50,19 @@ public class ScheduleView extends ViewGroup {
     private final int mMinFlingVelocity;
     private final int mMaxFlingVelocity;
 
-    private ItemAnimator.ItemAnimatorListener mItemAnimatorListener =
-            new ItemAnimatorRestoreListener();
+    private ItemAnimator.ItemAnimatorListener mItemAnimatorListener = new ItemAnimatorRestoreListener();
 
-    public ScheduleView(Context context) {
+    TimelineViewAccessibilityDelegate mAccessibilityDelegate;// FIXME: 2016/12/8 之后改成自己的 ScheduleViewAccessibilityDeelgate
+
+    public TimelineView(Context context) {
         this(context, null);
     }
 
-    public ScheduleView(Context context, AttributeSet attrs) {
+    public TimelineView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ScheduleView(Context context, AttributeSet attrs, int defStyle) {
+    public TimelineView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, CLIP_TO_PADDING_ATTR, defStyle, 0);
@@ -77,6 +82,49 @@ public class ScheduleView extends ViewGroup {
         setWillNotDraw(getOverScrollMode() == View.OVER_SCROLL_NEVER);
 
         mItemAnimator.setListener(mItemAnimatorListener);
+        initAdapterManager();
+        initChildrenHelper();
+        // If not explicitly specified this view is important for accessibility.
+        if (ViewCompat.getImportantForAccessibility(this)
+                == ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_AUTO) {
+            ViewCompat.setImportantForAccessibility(this,
+                    ViewCompat.IMPORTANT_FOR_ACCESSIBILITY_YES);
+        }
+        mAccessibilityManager = (AccessibilityManager) getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
+        setAccessibilityDelegateCompat(new TimelineViewAccessibilityDelegate(this));
+        // Create the layoutManager if specified.
+
+        boolean nestedScrollingEnabled = true;
+
+
+    }
+
+    /**
+     * Returns the accessibility delegate compatibility implementation used by the RecyclerView.
+     *
+     * @return An instance of AccessibilityDelegateCompat used by RecyclerView
+     */
+    public TimelineViewAccessibilityDelegate getCompatAccessibilityDelegate() {
+        return mAccessibilityDelegate;
+    }
+
+    /**
+     * Sets the accessibility delegate compatibility implementation used by RecyclerView.
+     *
+     * @param accessibilityDelegate The accessibility delegate to be used by RecyclerView.
+     */
+    public void setAccessibilityDelegateCompat(
+            TimelineViewAccessibilityDelegate accessibilityDelegate) {
+        mAccessibilityDelegate = accessibilityDelegate;
+        ViewCompat.setAccessibilityDelegate(this, mAccessibilityDelegate);
+    }
+
+    private void initChildrenHelper() {
+        // FIXME: 2016/12/8 initChildrenHelper
+    }
+
+    void initAdapterManager() {
+        // FIXME: 2016/12/8 initAdapterManager
     }
 
     @Override
